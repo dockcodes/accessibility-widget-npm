@@ -47,38 +47,7 @@ export type AccessibilityEvent =
     | "AccessibilityMenuClose"
     | "AccessibilityReset";
 
-export type AccessibilityWidgetIncomingEvent =
-    | "AccessibilityOnChangeOption"
-    | "AccessibilityOnChangeOptionContrast"
-    | "AccessibilityOnChangeOptionFontSize"
-    | "AccessibilityOnChangeOptionInvertColor"
-    | "AccessibilityOnChangeOptionUnderline"
-    | "AccessibilityOnChangeOptionDisableAnimations"
-    | "AccessibilityOnChangeOptionDyslexic"
-    | "AccessibilityOnChangeOptionEnlargeCursor"
-    | "AccessibilityOnChangeOptionHideMedia"
-    | "AccessibilityOnChangeOptionLetterSpacing"
-    | "AccessibilityOnChangeOptionLineHeight"
-    | "AccessibilityOnChangeOptionSaturation"
-    | "AccessibilityOnChangeOptionShowLine"
-    | "AccessibilityOnChangeOptionTextToSpeech"
-
-    | "AccessibilityOnChangeProfile"
-    | "AccessibilityOnChangeProfileAdhd"
-    | "AccessibilityOnChangeProfileBlind"
-    | "AccessibilityOnChangeProfileCognitiveAndLearning"
-    | "AccessibilityOnChangeProfileColorBlind"
-    | "AccessibilityOnChangeProfileDyslexia"
-    | "AccessibilityOnChangeProfileEpileptic"
-    | "AccessibilityOnChangeProfileLowVision"
-    | "AccessibilityOnChangeProfileMotorImpaired"
-
-    | "AccessibilityOnMenuOpen"
-    | "AccessibilityOnMenuClose"
-    | "AccessibilityOnChangePosition"
-    | "AccessibilityOnChangeLanguage";
-
-export const ACCESSIBILITY_EVENTS: AccessibilityWidgetIncomingEvent[] = [
+export const ACCESSIBILITY_EVENTS = [
     "AccessibilityOnChangeOption",
     "AccessibilityOnChangeOptionContrast",
     "AccessibilityOnChangeOptionFontSize",
@@ -108,4 +77,6 @@ export const ACCESSIBILITY_EVENTS: AccessibilityWidgetIncomingEvent[] = [
     "AccessibilityOnMenuClose",
     "AccessibilityOnChangePosition",
     "AccessibilityOnChangeLanguage",
-];
+] as const;
+
+export type AccessibilityWidgetIncomingEvent = (typeof ACCESSIBILITY_EVENTS)[number]
