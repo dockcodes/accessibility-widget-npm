@@ -7,28 +7,32 @@ Check our [Accessibility Widget](https://wcag.dock.codes/#wcag-open).
 ```bash
 npm install @dockcodes/accessibility-widget
 ```
+
 or
+
 ```bash
 yarn add @dockcodes/accessibility-widget
 ```
 
 ### Usage
+
 ```ts
-import accessibility from "@dockcodes/accessibility-widget"
+import accessibility from '@dockcodes/accessibility-widget';
 
-await accessibility.init("YOUR_TOKEN")
+await accessibility.init('YOUR_TOKEN');
 
-accessibility.setContrast(true)
-accessibility.setLanguage("en")
-accessibility.setFontSize(4)
+accessibility.setContrast(true);
+accessibility.setLanguage('en');
+accessibility.setFontSize(4);
 accessibility.onMenuOpen(() => {
-    console.log('Menu opened!')
-})
+    console.log('Menu opened!');
+});
 ```
 
 ### Event triggers
+
 | Method                                      | Description                                   |
-|---------------------------------------------|-----------------------------------------------|
+| ------------------------------------------- | --------------------------------------------- |
 | `toggleContrast()`                          | Toggles the page contrast                     |
 | `setContrast(enabled: boolean)`             | Sets the page contrast on/off                 |
 | `toggleInvertColors()`                      | Toggles color inversion                       |
@@ -77,10 +81,36 @@ accessibility.onMenuOpen(() => {
 | `closeMenu()`                               | Closes the accessibility menu                 |
 | `resetAll()`                                | Resets all widget settings to default         |
 
+### Getters
+
+| Method                   | Description                                             |
+| ------------------------ | ------------------------------------------------------- |
+| `isContrast`             | Returns whether page contrast is enabled                |
+| `isInvert`               | Returns whether color inversion is enabled              |
+| `isUnderline`            | Returns whether link underlining is enabled             |
+| `fontSizeScale`          | Returns the current font size (1–5)                     |
+| `letterSpacingScale`     | Returns the current letter spacing level (1–5)          |
+| `lineHeightScale`        | Returns the current line height (1–5)                   |
+| `saturationScale`        | Returns the current color saturation level (1–3)        |
+| `isTextToSpeech`         | Returns whether text-to-speech is enabled               |
+| `isCursorEnlarge`        | Returns whether enlarged cursor is enabled              |
+| `isHideMedia`            | Returns whether hiding embedded media is enabled        |
+| `isDisableAnimations`    | Returns whether page animations are disabled            |
+| `isReadingGuide`         | Returns whether reading guide is enabled                |
+| `isDyslexicFont`         | Returns whether dyslexic-friendly font is enabled       |
+| `isProfileMotorImpaired` | Returns whether motor impairment profile is enabled     |
+| `isProfileLowVision`     | Returns whether low vision profile is enabled           |
+| `isProfileColorBlind`    | Returns whether color blind profile is enabled          |
+| `isProfileDyslexia`      | Returns whether dyslexia profile is enabled             |
+| `isProfileBlind`         | Returns whether blind profile is enabled                |
+| `isProfileEpileptic`     | Returns whether epilepsy-safe profile is enabled        |
+| `isProfileAdhd`          | Returns whether ADHD profile is enabled                 |
+| `isProfileCognitive`     | Returns whether cognitive & learning profile is enabled |
 
 ### Event handlers
+
 | Method                                    | Event                              |
-|-------------------------------------------|------------------------------------|
+| ----------------------------------------- | ---------------------------------- |
 | `onMenuOpen(cb)`                          | on open accessibility menu         |
 | `onMenuClose(cb)`                         | on closed accessibility menu       |
 | `onChangeLanguage(cb)`                    | on change widget language          |
@@ -110,20 +140,22 @@ accessibility.onMenuOpen(() => {
 | `onChangeProfileMotorImpaired(cb)`        | on change Motor impaired profile   |
 
 ### Google Tag Manager integration
-```javascript
-import accessibility from "@dockcodes/accessibility-widget"
 
-await accessibility.init("YOUR_TOKEN")
+```javascript
+import accessibility from '@dockcodes/accessibility-widget';
+
+await accessibility.init('YOUR_TOKEN');
 
 accessibility.onChangeOption((data) => {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
-        event: "AccessibilityChange",
+        event: 'AccessibilityChange',
         optionType: data.type,
-        optionValue: data.value
-    })
-})
+        optionValue: data.value,
+    });
+});
 ```
+
 ### 🔑 Get Your Free Widget Token
 
 👉 https://wcag.dock.codes/my-account/tokens/
