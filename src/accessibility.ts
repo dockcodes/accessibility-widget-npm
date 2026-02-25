@@ -1,213 +1,298 @@
-import {
-    ACCESSIBILITY_EVENTS,
-    AccessibilityEvent,
-    AccessibilityWidgetIncomingEvent
-} from "./types"
-import {loadWidgetScript} from "./loader"
+import { loadWidgetScript } from './loader';
+import { ACCESSIBILITY_EVENTS, AccessibilityActionKey, AccessibilityActions, AccessibilityActionsMap, AccessibilityEvent, AccessibilityWidgetIncomingEvent } from './types';
 
 declare global {
     interface Window {
         accessibility?: {
-            emit: (event: string, payload?: any) => void
+            emit: (event: string, payload?: any) => void;
+            btns: AccessibilityActions;
         };
     }
 }
 
 export class AccessibilitySDK {
-    private loaded = false
-    private loadPromise: Promise<void> | null = null
-    private listeners: Map<string, Array<(detail: any) => void>> = new Map()
-    private listenersAny: Array<(eventName: string, detail: any) => void> = []
-    private domListenersAttached: Set<string> = new Set()
+    private loaded = false;
+    private loadPromise: Promise<void> | null = null;
+    private listeners: Map<string, Array<(detail: any) => void>> = new Map();
+    private listenersAny: Array<(eventName: string, detail: any) => void> = [];
+    private domListenersAttached: Set<string> = new Set();
 
     init(token: string) {
-        if (this.loadPromise) return this.loadPromise
+        if (this.loadPromise) return this.loadPromise;
 
         this.loadPromise = loadWidgetScript(token).then(() => {
-            this.loaded = true
+            this.loaded = true;
         });
 
-        return this.loadPromise
+        return this.loadPromise;
     }
 
     ready(): Promise<void> {
-        if (this.loaded) return Promise.resolve()
-        if (this.loadPromise) return this.loadPromise
-        return Promise.reject("Widget not initialized")
+        if (this.loaded) return Promise.resolve();
+        if (this.loadPromise) return this.loadPromise;
+        return Promise.reject('Widget not initialized');
     }
 
     emit(event: AccessibilityEvent, payload?: any) {
         if (!window.accessibility) {
-            console.warn("Widget not ready yet")
-            return
+            console.warn('Widget not ready yet');
+            return;
         }
-        window.accessibility.emit(event, payload)
+        window.accessibility.emit(event, payload);
+    }
+
+    getAction<T extends AccessibilityActionKey>(name: T) {
+        return window.accessibility?.btns.find(({ name: n }) => n === name) as AccessibilityActionsMap[T];
     }
 
     on(eventName: AccessibilityWidgetIncomingEvent, callback: (detail: any) => void) {
         if (!ACCESSIBILITY_EVENTS.includes(eventName)) {
-            console.warn(`Unknown accessibility event: ${eventName}`)
-            return
+            console.warn(`Unknown accessibility event: ${eventName}`);
+            return;
         }
 
         if (!this.listeners.has(eventName)) {
-            this.listeners.set(eventName, [])
+            this.listeners.set(eventName, []);
         }
-        this.listeners.get(eventName)!.push(callback)
+        this.listeners.get(eventName)!.push(callback);
 
         if (!this.domListenersAttached.has(eventName)) {
-            this.attachDomListener(eventName)
-            this.domListenersAttached.add(eventName)
+            this.attachDomListener(eventName);
+            this.domListenersAttached.add(eventName);
         }
     }
 
     onAny(callback: (eventName: string, detail: any) => void) {
-        this.listenersAny.push(callback)
+        this.listenersAny.push(callback);
 
-        ACCESSIBILITY_EVENTS.forEach(event => {
+        ACCESSIBILITY_EVENTS.forEach((event) => {
             if (!this.domListenersAttached.has(event)) {
-                this.attachDomListener(event)
-                this.domListenersAttached.add(event)
+                this.attachDomListener(event);
+                this.domListenersAttached.add(event);
             }
-        })
+        });
     }
 
-    setLanguage = (lang: string) => this.emit("AccessibilityLanguageSet", lang)
+    setLanguage = (lang: string) => this.emit('AccessibilityLanguageSet', lang);
 
-    openMenu = () => this.emit("AccessibilityMenuOpen")
+    openMenu = () => this.emit('AccessibilityMenuOpen');
 
-    closeMenu = () => this.emit("AccessibilityMenuClose")
+    closeMenu = () => this.emit('AccessibilityMenuClose');
 
-    setContrast = (enabled: boolean) => this.emit("AccessibilityContrastSet", enabled)
+    get isContrasted() {
+        return this.getAction('contrast').contrasted;
+    }
 
-    toggleContrast = () => this.emit("AccessibilityContrastToggle")
+    setContrast = (enabled: boolean) => this.emit('AccessibilityContrastSet', enabled);
 
-    toggleInvertColors = () => this.emit("AccessibilityInvertColorToggle")
+    toggleContrast = () => this.emit('AccessibilityContrastToggle');
 
-    setInvertColors = (enabled: boolean) => this.emit("AccessibilityInvertColorSet", enabled)
+    get isInverted() {
+        return this.getAction('invertColor').inverted;
+    }
 
-    toggleUnderline = () => this.emit("AccessibilityUnderlineToggle")
+    toggleInvertColors = () => this.emit('AccessibilityInvertColorToggle');
 
-    setUnderline = (enabled: boolean) => this.emit("AccessibilityUnderlineSet", enabled)
+    setInvertColors = (enabled: boolean) => this.emit('AccessibilityInvertColorSet', enabled);
 
-    setFontSize = (level: number) => this.emit("AccessibilityFontSizeSet", level)
+    get isUnderlined() {
+        return this.getAction('underline').underline;
+    }
 
-    increaseFontSize = () => this.emit("AccessibilityFontSizeIncrease")
+    toggleUnderline = () => this.emit('AccessibilityUnderlineToggle');
 
-    decreaseFontSize = () => this.emit("AccessibilityFontSizeDecrease")
+    setUnderline = (enabled: boolean) => this.emit('AccessibilityUnderlineSet', enabled);
 
-    increaseLetterSpacing = () => this.emit("AccessibilityLetterSpacingLevelUp")
+    get fontSizeScale() {
+        return this.getAction('fontSize').currentFontSize;
+    }
 
-    setLetterSpacing = (level: number) => this.emit("AccessibilityLetterSpacingSet", level)
+    setFontSize = (level: number) => this.emit('AccessibilityFontSizeSet', level);
 
-    increaseLineHeight = () => this.emit("AccessibilityLineHeightLevelUp")
+    increaseFontSize = () => this.emit('AccessibilityFontSizeIncrease');
 
-    setLineHeight = (level: number) => this.emit("AccessibilityLineHeightSet", level)
+    decreaseFontSize = () => this.emit('AccessibilityFontSizeDecrease');
 
-    increaseSaturation = () => this.emit("AccessibilitySaturationLevelUp")
+    get letterSpacingScale() {
+        return this.getAction('letterSpacing').currentLetterSpacing;
+    }
 
-    setSaturation = (level: number) => this.emit("AccessibilitySaturationSet", level)
+    increaseLetterSpacing = () => this.emit('AccessibilityLetterSpacingLevelUp');
 
-    toggleTextToSpeech = () => this.emit("AccessibilityTextToSpeechToggle")
+    setLetterSpacing = (level: number) => this.emit('AccessibilityLetterSpacingSet', level);
 
-    setTextToSpeech = (enabled: boolean) => this.emit("AccessibilityTextToSpeechSet", enabled)
+    get lineHeightScale() {
+        return this.getAction('lineHeight').currentLineHeight;
+    }
 
-    toggleCursorEnlarge = () => this.emit("AccessibilityEnlargeCursorToggle")
+    increaseLineHeight = () => this.emit('AccessibilityLineHeightLevelUp');
 
-    setCursorEnlarge = (enabled: boolean) => this.emit("AccessibilityEnlargeCursorSet", enabled)
+    setLineHeight = (level: number) => this.emit('AccessibilityLineHeightSet', level);
 
-    toggleHideMedia = () => this.emit("AccessibilityHideMediaToggle")
+    get saturationScale() {
+        return this.getAction('saturation').currentSaturation;
+    }
 
-    setHideMedia = (enabled: boolean) => this.emit("AccessibilityHideMediaSet", enabled)
+    increaseSaturation = () => this.emit('AccessibilitySaturationLevelUp');
 
-    toggleDisableAnimations = () => this.emit("AccessibilityDisableAnimationsToggle")
+    setSaturation = (level: number) => this.emit('AccessibilitySaturationSet', level);
 
-    setDisableAnimations = (enabled: boolean) => this.emit("AccessibilityDisableAnimationsSet", enabled)
+    get isTextToSpeech() {
+        return this.getAction('textToSpeech').textToSpeech;
+    }
 
-    toggleReadingGuide = () => this.emit("AccessibilityShowLineToggle")
+    toggleTextToSpeech = () => this.emit('AccessibilityTextToSpeechToggle');
 
-    setReadingGuide = (enabled: boolean) => this.emit("AccessibilityShowLineSet", enabled)
+    setTextToSpeech = (enabled: boolean) => this.emit('AccessibilityTextToSpeechSet', enabled);
 
-    toggleDyslexicFont = () => this.emit("AccessibilityDyslexicToggle")
+    get isEnlargeCursor() {
+        return this.getAction('enlargeCursor').enlargeCursor;
+    }
 
-    setDyslexicFont = (enabled: boolean) => this.emit("AccessibilityDyslexicSet", enabled)
+    toggleCursorEnlarge = () => this.emit('AccessibilityEnlargeCursorToggle');
 
-    toggleProfileMotorImpaired = () => this.emit("AccessibilityProfileMotorImpairedToggle")
+    setCursorEnlarge = (enabled: boolean) => this.emit('AccessibilityEnlargeCursorSet', enabled);
 
-    setProfileMotorImpaired = (enabled: boolean) => this.emit("AccessibilityProfileMotorImpairedSet", enabled)
+    get isHideMedia() {
+        return this.getAction('hideMedia').hideMedia;
+    }
 
-    toggleProfileLowVision = () => this.emit("AccessibilityProfileLowVisionToggle")
+    toggleHideMedia = () => this.emit('AccessibilityHideMediaToggle');
 
-    setProfileLowVision = (enabled: boolean) => this.emit("AccessibilityProfileLowVisionSet", enabled)
+    setHideMedia = (enabled: boolean) => this.emit('AccessibilityHideMediaSet', enabled);
 
-    toggleProfileColorBlind = () => this.emit("AccessibilityProfileColorBlindToggle")
+    get isDisableAnimations() {
+        return this.getAction('disableAnimations').disableAnimations;
+    }
 
-    setProfileColorBlind = (enabled: boolean) => this.emit("AccessibilityProfileColorBlindSet", enabled)
+    toggleDisableAnimations = () => this.emit('AccessibilityDisableAnimationsToggle');
 
-    toggleProfileDyslexia = () => this.emit("AccessibilityProfileDyslexiaToggle")
+    setDisableAnimations = (enabled: boolean) => this.emit('AccessibilityDisableAnimationsSet', enabled);
 
-    setProfileDyslexia = (enabled: boolean) => this.emit("AccessibilityProfileDyslexiaSet", enabled)
+    get isShowLine() {
+        return this.getAction('showLine').showLine;
+    }
 
-    toggleProfileBlind = () => this.emit("AccessibilityProfileBlindToggle")
+    toggleReadingGuide = () => this.emit('AccessibilityShowLineToggle');
 
-    setProfileBlind = (enabled: boolean) => this.emit("AccessibilityProfileBlindSet", enabled)
+    setReadingGuide = (enabled: boolean) => this.emit('AccessibilityShowLineSet', enabled);
 
-    toggleProfileEpileptic = () => this.emit("AccessibilityProfileEpilepticToggle")
+    get isDyslexicFont() {
+        return this.getAction('dyslexic').dyslexic;
+    }
 
-    setProfileEpileptic = (enabled: boolean) => this.emit("AccessibilityProfileEpilepticSet", enabled)
+    toggleDyslexicFont = () => this.emit('AccessibilityDyslexicToggle');
 
-    toggleProfileAdhd = () => this.emit("AccessibilityProfileAdhdToggle")
+    setDyslexicFont = (enabled: boolean) => this.emit('AccessibilityDyslexicSet', enabled);
 
-    setProfileAdhd = (enabled: boolean) => this.emit("AccessibilityProfileAdhdSet", enabled)
+    get isMotorImpaired() {
+        return this.getAction('motorImpaired').motorImpaired;
+    }
 
-    toggleProfileCognitive = () => this.emit("AccessibilityProfileCognitiveAndLearningToggle")
+    toggleProfileMotorImpaired = () => this.emit('AccessibilityProfileMotorImpairedToggle');
 
-    setProfileCognitive = (enabled: boolean) => this.emit("AccessibilityProfileCognitiveAndLearningSet", enabled)
+    setProfileMotorImpaired = (enabled: boolean) => this.emit('AccessibilityProfileMotorImpairedSet', enabled);
 
-    resetAll = () => this.emit("AccessibilityReset")
+    get isLowVision() {
+        return this.getAction('lowVision').lowVision;
+    }
 
-    onMenuOpen = (cb: any) => this.on("AccessibilityOnMenuOpen", cb)
-    onMenuClose = (cb: any) => this.on("AccessibilityOnMenuClose", cb)
-    onChangePosition = (cb: any) => this.on("AccessibilityOnChangePosition", cb)
-    onChangeLanguage = (cb: any) => this.on("AccessibilityOnChangeLanguage", cb)
+    toggleProfileLowVision = () => this.emit('AccessibilityProfileLowVisionToggle');
 
-    onChangeOption = (cb: any) => this.on("AccessibilityOnChangeOption", cb)
-    onChangeOptionContrast = (cb: any) => this.on("AccessibilityOnChangeOptionContrast", cb)
-    onChangeOptionFontSize = (cb: any) => this.on("AccessibilityOnChangeOptionFontSize", cb)
-    onChangeOptionInvertColor = (cb: any) => this.on("AccessibilityOnChangeOptionInvertColor", cb)
-    onChangeOptionUnderline = (cb: any) => this.on("AccessibilityOnChangeOptionUnderline", cb)
-    onChangeOptionDisableAnimations = (cb: any) => this.on("AccessibilityOnChangeOptionDisableAnimations", cb)
-    onChangeOptionDyslexic = (cb: any) => this.on("AccessibilityOnChangeOptionDyslexic", cb)
-    onChangeOptionEnlargeCursor = (cb: any) => this.on("AccessibilityOnChangeOptionEnlargeCursor", cb)
-    onChangeOptionHideMedia = (cb: any) => this.on("AccessibilityOnChangeOptionHideMedia", cb)
-    onChangeOptionLetterSpacing = (cb: any) => this.on("AccessibilityOnChangeOptionLetterSpacing", cb)
-    onChangeOptionLineHeight = (cb: any) => this.on("AccessibilityOnChangeOptionLineHeight", cb)
-    onChangeOptionSaturation = (cb: any) => this.on("AccessibilityOnChangeOptionSaturation", cb)
-    onChangeOptionShowLine = (cb: any) => this.on("AccessibilityOnChangeOptionShowLine", cb)
-    onChangeOptionTextToSpeech = (cb: any) => this.on("AccessibilityOnChangeOptionTextToSpeech", cb)
+    setProfileLowVision = (enabled: boolean) => this.emit('AccessibilityProfileLowVisionSet', enabled);
 
-    onChangeProfile = (cb: any) => this.on("AccessibilityOnChangeProfile", cb)
-    onChangeProfileAdhd = (cb: any) => this.on("AccessibilityOnChangeProfileAdhd", cb)
-    onChangeProfileBlind = (cb: any) => this.on("AccessibilityOnChangeProfileBlind", cb)
-    onChangeProfileCognitiveAndLearning = (cb: any) => this.on("AccessibilityOnChangeProfileCognitiveAndLearning", cb)
-    onChangeProfileColorBlind = (cb: any) => this.on("AccessibilityOnChangeProfileColorBlind", cb)
-    onChangeProfileDyslexia = (cb: any) => this.on("AccessibilityOnChangeProfileDyslexia", cb)
-    onChangeProfileEpileptic = (cb: any) => this.on("AccessibilityOnChangeProfileEpileptic", cb)
-    onChangeProfileLowVision = (cb: any) => this.on("AccessibilityOnChangeProfileLowVision", cb)
-    onChangeProfileMotorImpaired = (cb: any) => this.on("AccessibilityOnChangeProfileMotorImpaired", cb)
+    get isColorBlind() {
+        return this.getAction('colorBlind').colorBlind;
+    }
+
+    toggleProfileColorBlind = () => this.emit('AccessibilityProfileColorBlindToggle');
+
+    setProfileColorBlind = (enabled: boolean) => this.emit('AccessibilityProfileColorBlindSet', enabled);
+
+    get isDyslexia() {
+        return this.getAction('dyslexia').dyslexia;
+    }
+
+    toggleProfileDyslexia = () => this.emit('AccessibilityProfileDyslexiaToggle');
+
+    setProfileDyslexia = (enabled: boolean) => this.emit('AccessibilityProfileDyslexiaSet', enabled);
+
+    get isBlind() {
+        return this.getAction('blind').blind;
+    }
+
+    toggleProfileBlind = () => this.emit('AccessibilityProfileBlindToggle');
+
+    setProfileBlind = (enabled: boolean) => this.emit('AccessibilityProfileBlindSet', enabled);
+
+    get isEpileptic() {
+        return this.getAction('epileptic').epileptic;
+    }
+
+    toggleProfileEpileptic = () => this.emit('AccessibilityProfileEpilepticToggle');
+
+    setProfileEpileptic = (enabled: boolean) => this.emit('AccessibilityProfileEpilepticSet', enabled);
+
+    get isAdhd() {
+        return this.getAction('adhd').adhd;
+    }
+
+    toggleProfileAdhd = () => this.emit('AccessibilityProfileAdhdToggle');
+
+    setProfileAdhd = (enabled: boolean) => this.emit('AccessibilityProfileAdhdSet', enabled);
+
+    get isCognitive() {
+        return this.getAction('cognitiveAndLearning').cognitiveAndLearning;
+    }
+
+    toggleProfileCognitive = () => this.emit('AccessibilityProfileCognitiveAndLearningToggle');
+
+    setProfileCognitive = (enabled: boolean) => this.emit('AccessibilityProfileCognitiveAndLearningSet', enabled);
+
+    resetAll = () => this.emit('AccessibilityReset');
+
+    onMenuOpen = (cb: any) => this.on('AccessibilityOnMenuOpen', cb);
+    onMenuClose = (cb: any) => this.on('AccessibilityOnMenuClose', cb);
+    onChangePosition = (cb: any) => this.on('AccessibilityOnChangePosition', cb);
+    onChangeLanguage = (cb: any) => this.on('AccessibilityOnChangeLanguage', cb);
+
+    onChangeOption = (cb: any) => this.on('AccessibilityOnChangeOption', cb);
+    onChangeOptionContrast = (cb: any) => this.on('AccessibilityOnChangeOptionContrast', cb);
+    onChangeOptionFontSize = (cb: any) => this.on('AccessibilityOnChangeOptionFontSize', cb);
+    onChangeOptionInvertColor = (cb: any) => this.on('AccessibilityOnChangeOptionInvertColor', cb);
+    onChangeOptionUnderline = (cb: any) => this.on('AccessibilityOnChangeOptionUnderline', cb);
+    onChangeOptionDisableAnimations = (cb: any) => this.on('AccessibilityOnChangeOptionDisableAnimations', cb);
+    onChangeOptionDyslexic = (cb: any) => this.on('AccessibilityOnChangeOptionDyslexic', cb);
+    onChangeOptionEnlargeCursor = (cb: any) => this.on('AccessibilityOnChangeOptionEnlargeCursor', cb);
+    onChangeOptionHideMedia = (cb: any) => this.on('AccessibilityOnChangeOptionHideMedia', cb);
+    onChangeOptionLetterSpacing = (cb: any) => this.on('AccessibilityOnChangeOptionLetterSpacing', cb);
+    onChangeOptionLineHeight = (cb: any) => this.on('AccessibilityOnChangeOptionLineHeight', cb);
+    onChangeOptionSaturation = (cb: any) => this.on('AccessibilityOnChangeOptionSaturation', cb);
+    onChangeOptionShowLine = (cb: any) => this.on('AccessibilityOnChangeOptionShowLine', cb);
+    onChangeOptionTextToSpeech = (cb: any) => this.on('AccessibilityOnChangeOptionTextToSpeech', cb);
+
+    onChangeProfile = (cb: any) => this.on('AccessibilityOnChangeProfile', cb);
+    onChangeProfileAdhd = (cb: any) => this.on('AccessibilityOnChangeProfileAdhd', cb);
+    onChangeProfileBlind = (cb: any) => this.on('AccessibilityOnChangeProfileBlind', cb);
+    onChangeProfileCognitiveAndLearning = (cb: any) => this.on('AccessibilityOnChangeProfileCognitiveAndLearning', cb);
+    onChangeProfileColorBlind = (cb: any) => this.on('AccessibilityOnChangeProfileColorBlind', cb);
+    onChangeProfileDyslexia = (cb: any) => this.on('AccessibilityOnChangeProfileDyslexia', cb);
+    onChangeProfileEpileptic = (cb: any) => this.on('AccessibilityOnChangeProfileEpileptic', cb);
+    onChangeProfileLowVision = (cb: any) => this.on('AccessibilityOnChangeProfileLowVision', cb);
+    onChangeProfileMotorImpaired = (cb: any) => this.on('AccessibilityOnChangeProfileMotorImpaired', cb);
 
     private dispatch(eventName: string, detail: any) {
-        const hs = this.listeners.get(eventName)
-        if (hs) hs.forEach(cb => cb(detail))
+        const hs = this.listeners.get(eventName);
+        if (hs) hs.forEach((cb) => cb(detail));
 
-        this.listenersAny.forEach(cb => cb(eventName, detail))
+        this.listenersAny.forEach((cb) => cb(eventName, detail));
     }
 
     private attachDomListener(eventName: AccessibilityWidgetIncomingEvent) {
         window.addEventListener(eventName, (event: any) => {
-            this.dispatch(eventName, event.detail)
-        })
+            this.dispatch(eventName, event.detail);
+        });
     }
 }
 
-export const accessibility = new AccessibilitySDK()
+export const accessibility = new AccessibilitySDK();
