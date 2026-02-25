@@ -80,7 +80,7 @@ export class AccessibilitySDK {
     closeMenu = () => this.emit('AccessibilityMenuClose');
 
     get isContrast() {
-        return this.getAction('contrast').contrasted;
+        return this.getAction('contrast').contrasted || false;
     }
 
     setContrast = (enabled: boolean) => this.emit('AccessibilityContrastSet', enabled);
@@ -88,7 +88,7 @@ export class AccessibilitySDK {
     toggleContrast = () => this.emit('AccessibilityContrastToggle');
 
     get isInvert() {
-        return this.getAction('invertColor').inverted;
+        return this.getAction('invertColor').inverted || false;
     }
 
     toggleInvertColors = () => this.emit('AccessibilityInvertColorToggle');
@@ -96,7 +96,7 @@ export class AccessibilitySDK {
     setInvertColors = (enabled: boolean) => this.emit('AccessibilityInvertColorSet', enabled);
 
     get isUnderline() {
-        return this.getAction('underline').underline;
+        return this.getAction('underline').underline || false;
     }
 
     toggleUnderline = () => this.emit('AccessibilityUnderlineToggle');
@@ -104,7 +104,7 @@ export class AccessibilitySDK {
     setUnderline = (enabled: boolean) => this.emit('AccessibilityUnderlineSet', enabled);
 
     get fontSizeScale() {
-        return this.getAction('fontSize').currentFontSize;
+        return this.getAction('fontSize').currentFontSize || 0;
     }
 
     setFontSize = (level: number) => this.emit('AccessibilityFontSizeSet', level);
@@ -114,7 +114,7 @@ export class AccessibilitySDK {
     decreaseFontSize = () => this.emit('AccessibilityFontSizeDecrease');
 
     get letterSpacingScale() {
-        return this.getAction('letterSpacing').currentLetterSpacing;
+        return this.getAction('letterSpacing').currentLetterSpacing || 0;
     }
 
     increaseLetterSpacing = () => this.emit('AccessibilityLetterSpacingLevelUp');
@@ -122,7 +122,7 @@ export class AccessibilitySDK {
     setLetterSpacing = (level: number) => this.emit('AccessibilityLetterSpacingSet', level);
 
     get lineHeightScale() {
-        return this.getAction('lineHeight').currentLineHeight;
+        return this.getAction('lineHeight').currentLineHeight || 0;
     }
 
     increaseLineHeight = () => this.emit('AccessibilityLineHeightLevelUp');
@@ -130,7 +130,7 @@ export class AccessibilitySDK {
     setLineHeight = (level: number) => this.emit('AccessibilityLineHeightSet', level);
 
     get saturationScale() {
-        return this.getAction('saturation').currentSaturation;
+        return this.getAction('saturation').currentSaturation || 0;
     }
 
     increaseSaturation = () => this.emit('AccessibilitySaturationLevelUp');
@@ -138,7 +138,7 @@ export class AccessibilitySDK {
     setSaturation = (level: number) => this.emit('AccessibilitySaturationSet', level);
 
     get isTextToSpeech() {
-        return this.getAction('textToSpeech').textToSpeech;
+        return this.getAction('textToSpeech').textToSpeech || false;
     }
 
     toggleTextToSpeech = () => this.emit('AccessibilityTextToSpeechToggle');
@@ -146,7 +146,7 @@ export class AccessibilitySDK {
     setTextToSpeech = (enabled: boolean) => this.emit('AccessibilityTextToSpeechSet', enabled);
 
     get isCursorEnlarge() {
-        return this.getAction('enlargeCursor').enlargeCursor;
+        return this.getAction('enlargeCursor').enlargeCursor || false;
     }
 
     toggleCursorEnlarge = () => this.emit('AccessibilityEnlargeCursorToggle');
@@ -154,7 +154,7 @@ export class AccessibilitySDK {
     setCursorEnlarge = (enabled: boolean) => this.emit('AccessibilityEnlargeCursorSet', enabled);
 
     get isHideMedia() {
-        return this.getAction('hideMedia').hideMedia;
+        return this.getAction('hideMedia').hideMedia || false;
     }
 
     toggleHideMedia = () => this.emit('AccessibilityHideMediaToggle');
@@ -162,7 +162,7 @@ export class AccessibilitySDK {
     setHideMedia = (enabled: boolean) => this.emit('AccessibilityHideMediaSet', enabled);
 
     get isDisableAnimations() {
-        return this.getAction('disableAnimations').disableAnimations;
+        return this.getAction('disableAnimations').disableAnimations || false;
     }
 
     toggleDisableAnimations = () => this.emit('AccessibilityDisableAnimationsToggle');
@@ -170,7 +170,7 @@ export class AccessibilitySDK {
     setDisableAnimations = (enabled: boolean) => this.emit('AccessibilityDisableAnimationsSet', enabled);
 
     get isReadingGuide() {
-        return this.getAction('showLine').showLine;
+        return this.getAction('showLine').showLine || false;
     }
 
     toggleReadingGuide = () => this.emit('AccessibilityShowLineToggle');
@@ -178,7 +178,7 @@ export class AccessibilitySDK {
     setReadingGuide = (enabled: boolean) => this.emit('AccessibilityShowLineSet', enabled);
 
     get isDyslexicFont() {
-        return this.getAction('dyslexic').dyslexic;
+        return this.getAction('dyslexic').dyslexic || false;
     }
 
     toggleDyslexicFont = () => this.emit('AccessibilityDyslexicToggle');
@@ -186,7 +186,7 @@ export class AccessibilitySDK {
     setDyslexicFont = (enabled: boolean) => this.emit('AccessibilityDyslexicSet', enabled);
 
     get isProfileMotorImpaired() {
-        return this.getAction('motorImpaired').motorImpaired;
+        return this.getAction('motorImpaired').motorImpaired || false;
     }
 
     toggleProfileMotorImpaired = () => this.emit('AccessibilityProfileMotorImpairedToggle');
@@ -194,7 +194,7 @@ export class AccessibilitySDK {
     setProfileMotorImpaired = (enabled: boolean) => this.emit('AccessibilityProfileMotorImpairedSet', enabled);
 
     get isProfileLowVision() {
-        return this.getAction('lowVision').lowVision;
+        return this.getAction('lowVision').lowVision || false;
     }
 
     toggleProfileLowVision = () => this.emit('AccessibilityProfileLowVisionToggle');
@@ -202,7 +202,7 @@ export class AccessibilitySDK {
     setProfileLowVision = (enabled: boolean) => this.emit('AccessibilityProfileLowVisionSet', enabled);
 
     get isProfileColorBlind() {
-        return this.getAction('colorBlind').colorBlind;
+        return this.getAction('colorBlind').colorBlind || false;
     }
 
     toggleProfileColorBlind = () => this.emit('AccessibilityProfileColorBlindToggle');
@@ -210,7 +210,7 @@ export class AccessibilitySDK {
     setProfileColorBlind = (enabled: boolean) => this.emit('AccessibilityProfileColorBlindSet', enabled);
 
     get isProfileDyslexia() {
-        return this.getAction('dyslexia').dyslexia;
+        return this.getAction('dyslexia').dyslexia || false;
     }
 
     toggleProfileDyslexia = () => this.emit('AccessibilityProfileDyslexiaToggle');
@@ -218,7 +218,7 @@ export class AccessibilitySDK {
     setProfileDyslexia = (enabled: boolean) => this.emit('AccessibilityProfileDyslexiaSet', enabled);
 
     get isProfileBlind() {
-        return this.getAction('blind').blind;
+        return this.getAction('blind').blind || false;
     }
 
     toggleProfileBlind = () => this.emit('AccessibilityProfileBlindToggle');
@@ -226,7 +226,7 @@ export class AccessibilitySDK {
     setProfileBlind = (enabled: boolean) => this.emit('AccessibilityProfileBlindSet', enabled);
 
     get isProfileEpileptic() {
-        return this.getAction('epileptic').epileptic;
+        return this.getAction('epileptic').epileptic || false;
     }
 
     toggleProfileEpileptic = () => this.emit('AccessibilityProfileEpilepticToggle');
@@ -234,7 +234,7 @@ export class AccessibilitySDK {
     setProfileEpileptic = (enabled: boolean) => this.emit('AccessibilityProfileEpilepticSet', enabled);
 
     get isProfileAdhd() {
-        return this.getAction('adhd').adhd;
+        return this.getAction('adhd').adhd || false;
     }
 
     toggleProfileAdhd = () => this.emit('AccessibilityProfileAdhdToggle');
@@ -242,7 +242,7 @@ export class AccessibilitySDK {
     setProfileAdhd = (enabled: boolean) => this.emit('AccessibilityProfileAdhdSet', enabled);
 
     get isProfileCognitive() {
-        return this.getAction('cognitiveAndLearning').cognitiveAndLearning;
+        return this.getAction('cognitiveAndLearning').cognitiveAndLearning || false;
     }
 
     toggleProfileCognitive = () => this.emit('AccessibilityProfileCognitiveAndLearningToggle');

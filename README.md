@@ -27,7 +27,35 @@ accessibility.setFontSize(4);
 accessibility.onMenuOpen(() => {
     console.log('Menu opened!');
 });
+console.log(accessibility.isContrast) // true | false
 ```
+
+### Getters
+
+| Method                   | Description                                             |
+| ------------------------ | ------------------------------------------------------- |
+| `isContrast`             | Returns whether page contrast is enabled                |
+| `isInvert`               | Returns whether color inversion is enabled              |
+| `isUnderline`            | Returns whether link underlining is enabled             |
+| `fontSizeScale`          | Returns the current font size (1–5)                     |
+| `letterSpacingScale`     | Returns the current letter spacing level (1–5)          |
+| `lineHeightScale`        | Returns the current line height (1–5)                   |
+| `saturationScale`        | Returns the current color saturation level (1–3)        |
+| `isTextToSpeech`         | Returns whether text-to-speech is enabled               |
+| `isCursorEnlarge`        | Returns whether enlarged cursor is enabled              |
+| `isHideMedia`            | Returns whether hiding embedded media is enabled        |
+| `isDisableAnimations`    | Returns whether page animations are disabled            |
+| `isReadingGuide`         | Returns whether reading guide is enabled                |
+| `isDyslexicFont`         | Returns whether dyslexic-friendly font is enabled       |
+| `isProfileMotorImpaired` | Returns whether motor impairment profile is enabled     |
+| `isProfileLowVision`     | Returns whether low vision profile is enabled           |
+| `isProfileColorBlind`    | Returns whether color blind profile is enabled          |
+| `isProfileDyslexia`      | Returns whether dyslexia profile is enabled             |
+| `isProfileBlind`         | Returns whether blind profile is enabled                |
+| `isProfileEpileptic`     | Returns whether epilepsy-safe profile is enabled        |
+| `isProfileAdhd`          | Returns whether ADHD profile is enabled                 |
+| `isProfileCognitive`     | Returns whether cognitive & learning profile is enabled |
+
 
 ### Event triggers
 
@@ -81,31 +109,6 @@ accessibility.onMenuOpen(() => {
 | `closeMenu()`                               | Closes the accessibility menu                 |
 | `resetAll()`                                | Resets all widget settings to default         |
 
-### Getters
-
-| Method                   | Description                                             |
-| ------------------------ | ------------------------------------------------------- |
-| `isContrast`             | Returns whether page contrast is enabled                |
-| `isInvert`               | Returns whether color inversion is enabled              |
-| `isUnderline`            | Returns whether link underlining is enabled             |
-| `fontSizeScale`          | Returns the current font size (1–5)                     |
-| `letterSpacingScale`     | Returns the current letter spacing level (1–5)          |
-| `lineHeightScale`        | Returns the current line height (1–5)                   |
-| `saturationScale`        | Returns the current color saturation level (1–3)        |
-| `isTextToSpeech`         | Returns whether text-to-speech is enabled               |
-| `isCursorEnlarge`        | Returns whether enlarged cursor is enabled              |
-| `isHideMedia`            | Returns whether hiding embedded media is enabled        |
-| `isDisableAnimations`    | Returns whether page animations are disabled            |
-| `isReadingGuide`         | Returns whether reading guide is enabled                |
-| `isDyslexicFont`         | Returns whether dyslexic-friendly font is enabled       |
-| `isProfileMotorImpaired` | Returns whether motor impairment profile is enabled     |
-| `isProfileLowVision`     | Returns whether low vision profile is enabled           |
-| `isProfileColorBlind`    | Returns whether color blind profile is enabled          |
-| `isProfileDyslexia`      | Returns whether dyslexia profile is enabled             |
-| `isProfileBlind`         | Returns whether blind profile is enabled                |
-| `isProfileEpileptic`     | Returns whether epilepsy-safe profile is enabled        |
-| `isProfileAdhd`          | Returns whether ADHD profile is enabled                 |
-| `isProfileCognitive`     | Returns whether cognitive & learning profile is enabled |
 
 ### Event handlers
 
