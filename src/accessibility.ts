@@ -1,11 +1,10 @@
 import { loadWidgetScript } from './loader';
-import { ACCESSIBILITY_EVENTS, AccessibilityActionKey, AccessibilityActions, AccessibilityEvent, AccessibilityWidgetIncomingEvent } from './types';
+import { ACCESSIBILITY_EVENTS, AccessibilityActionKey, AccessibilityEvent, AccessibilityWidgetIncomingEvent } from './types';
 
 declare global {
     interface Window {
         accessibility?: {
             emit: (event: string, payload?: any) => void;
-            btns: AccessibilityActions;
         };
     }
 }
