@@ -5,6 +5,7 @@ export type AccessibilityEvent =
     | 'AccessibilityInvertColorSet'
     | 'AccessibilityUnderlineToggle'
     | 'AccessibilityUnderlineSet'
+    | 'AccessibilityFontSizeLevelUp'
     | 'AccessibilityFontSizeSet'
     | 'AccessibilityFontSizeIncrease'
     | 'AccessibilityFontSizeDecrease'
