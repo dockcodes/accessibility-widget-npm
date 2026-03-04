@@ -27,35 +27,36 @@ accessibility.setFontSize(4);
 accessibility.onMenuOpen(() => {
     console.log('Menu opened!');
 });
-console.log(accessibility.isContrast) // true | false
+console.log(accessibility.isContrast); // true | false
 ```
 
 ### Getters
 
-| Method                   | Description                                             |
-| ------------------------ | ------------------------------------------------------- |
-| `isContrast`             | Returns whether page contrast is enabled                |
-| `isInvert`               | Returns whether color inversion is enabled              |
-| `isUnderline`            | Returns whether link underlining is enabled             |
-| `fontSizeScale`          | Returns the current font size (1–5)                     |
-| `letterSpacingScale`     | Returns the current letter spacing level (1–5)          |
-| `lineHeightScale`        | Returns the current line height (1–5)                   |
-| `saturationScale`        | Returns the current color saturation level (1–3)        |
-| `isTextToSpeech`         | Returns whether text-to-speech is enabled               |
-| `isCursorEnlarge`        | Returns whether enlarged cursor is enabled              |
-| `isHideMedia`            | Returns whether hiding embedded media is enabled        |
-| `isDisableAnimations`    | Returns whether page animations are disabled            |
-| `isReadingGuide`         | Returns whether reading guide is enabled                |
-| `isDyslexicFont`         | Returns whether dyslexic-friendly font is enabled       |
-| `isProfileMotorImpaired` | Returns whether motor impairment profile is enabled     |
-| `isProfileLowVision`     | Returns whether low vision profile is enabled           |
-| `isProfileColorBlind`    | Returns whether color blind profile is enabled          |
-| `isProfileDyslexia`      | Returns whether dyslexia profile is enabled             |
-| `isProfileBlind`         | Returns whether blind profile is enabled                |
-| `isProfileEpileptic`     | Returns whether epilepsy-safe profile is enabled        |
-| `isProfileAdhd`          | Returns whether ADHD profile is enabled                 |
-| `isProfileCognitive`     | Returns whether cognitive & learning profile is enabled |
+We recommend loading values using their local storage keys, but you can also use AccessibilitySDK methods.
 
+| Method                   | Local Storage Key       | Description                                             |
+| ------------------------ | ----------------------- | ------------------------------------------------------- |
+| `isContrast`             | dacc-contrasted         | Returns whether page contrast is enabled                |
+| `isInvert`               | dacc-inverted           | Returns whether color inversion is enabled              |
+| `isUnderline`            | dacc-underline          | Returns whether link underlining is enabled             |
+| `fontSizeScale`          | dacc-zoom               | Returns the current font size (1–5)                     |
+| `letterSpacingScale`     | dacc-letter-spacing     | Returns the current letter spacing level (1–5)          |
+| `lineHeightScale`        | dacc-line-height        | Returns the current line height (1–5)                   |
+| `saturationScale`        | dacc-saturation         | Returns the current color saturation level (1–3)        |
+| `isTextToSpeech`         | dacc-text-to-speech     | Returns whether text-to-speech is enabled               |
+| `isCursorEnlarge`        | dacc-enlarge-cursor     | Returns whether enlarged cursor is enabled              |
+| `isHideMedia`            | dacc-hide-media         | Returns whether hiding embedded media is enabled        |
+| `isDisableAnimations`    | dacc-disable-animations | Returns whether page animations are disabled            |
+| `isReadingGuide`         | dacc-show-line          | Returns whether reading guide is enabled                |
+| `isDyslexicFont`         | dacc-dyslexic           | Returns whether dyslexic-friendly font is enabled       |
+| `isProfileMotorImpaired` | dacc-mi                 | Returns whether motor impairment profile is enabled     |
+| `isProfileLowVision`     | dacc-lv                 | Returns whether low vision profile is enabled           |
+| `isProfileColorBlind`    | dacc-cb                 | Returns whether color blind profile is enabled          |
+| `isProfileDyslexia`      | dacc-ds                 | Returns whether dyslexia profile is enabled             |
+| `isProfileBlind`         | dacc-bl                 | Returns whether blind profile is enabled                |
+| `isProfileEpileptic`     | dacc-ep                 | Returns whether epilepsy-safe profile is enabled        |
+| `isProfileAdhd`          | dacc-ad                 | Returns whether ADHD profile is enabled                 |
+| `isProfileCognitive`     | dacc-cal                | Returns whether cognitive & learning profile is enabled |
 
 ### Event triggers
 
@@ -68,14 +69,18 @@ console.log(accessibility.isContrast) // true | false
 | `toggleUnderline()`                         | Toggles link underlining                      |
 | `setUnderline(enabled: boolean)`            | Enables/disables link underlining             |
 | `setFontSize(level: number)`                | Sets the font size (1–5)                      |
+| `fontSizeLevelUp()`                         | Iterates over font-size levels (1-4)          |
 | `increaseFontSize()`                        | Increases font size by 1                      |
 | `decreaseFontSize()`                        | Decreases font size by 1                      |
 | `increaseLetterSpacing()`                   | Increases letter spacing                      |
 | `setLetterSpacing(level: number)`           | Sets letter spacing level (1–5)               |
+| `letterSpacingLevelUp()`                    | Iterates over letter spacing levels (1-4)     |
 | `increaseLineHeight()`                      | Increases line height                         |
 | `setLineHeight(level: number)`              | Sets line height (1–5)                        |
+| `lineHeightLevelUp()`                       | Iterates over line height levels (1-4)        |
 | `increaseSaturation()`                      | Increases color saturation                    |
 | `setSaturation(level: number)`              | Sets color saturation (1–3)                   |
+| `saturationLevelUp()`                       | Iterates over saturation levels (1-4)         |
 | `toggleTextToSpeech()`                      | Toggles text-to-speech functionality          |
 | `setTextToSpeech(enabled: boolean)`         | Enables/disables text-to-speech               |
 | `toggleCursorEnlarge()`                     | Toggles enlarged cursor                       |
@@ -108,7 +113,6 @@ console.log(accessibility.isContrast) // true | false
 | `openMenu()`                                | Opens the accessibility menu                  |
 | `closeMenu()`                               | Closes the accessibility menu                 |
 | `resetAll()`                                | Resets all widget settings to default         |
-
 
 ### Event handlers
 

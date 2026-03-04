@@ -108,6 +108,8 @@ export class AccessibilitySDK {
 
     setFontSize = (level: number) => this.emit('AccessibilityFontSizeSet', level);
 
+    fontSizeLevelUp = () => this.emit('AccessibilityFontSizeLevelUp');
+
     increaseFontSize = () => this.emit('AccessibilityFontSizeIncrease');
 
     decreaseFontSize = () => this.emit('AccessibilityFontSizeDecrease');
@@ -120,6 +122,8 @@ export class AccessibilitySDK {
 
     setLetterSpacing = (level: number) => this.emit('AccessibilityLetterSpacingSet', level);
 
+    letterSpacingLevelUp = () => this.emit('AccessibilityLetterSpacingLevelUp');
+
     get lineHeightScale() {
         return parseInt(this.getAction('line-height') || '1') || 1;
     }
@@ -128,6 +132,8 @@ export class AccessibilitySDK {
 
     setLineHeight = (level: number) => this.emit('AccessibilityLineHeightSet', level);
 
+    lineHeightLevelUp = () => this.emit('AccessibilityLineHeightLevelUp');
+
     get saturationScale() {
         return parseInt(this.getAction('saturation') || '1') || 1;
     }
@@ -135,6 +141,8 @@ export class AccessibilitySDK {
     increaseSaturation = () => this.emit('AccessibilitySaturationLevelUp');
 
     setSaturation = (level: number) => this.emit('AccessibilitySaturationSet', level);
+
+    saturationLevelUp = () => this.emit('AccessibilitySaturationLevelUp');
 
     get isTextToSpeech() {
         return this.getAction('text-to-speech') === 'true';
