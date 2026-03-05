@@ -1,5 +1,11 @@
 import { loadWidgetScript } from './loader';
-import { ACCESSIBILITY_EVENTS, AccessibilityActionKey, AccessibilityEvent, AccessibilityWidgetIncomingEvent } from './types';
+import {
+    ACCESSIBILITY_EVENTS,
+    AccessibilityActionKey,
+    AccessibilityEvent,
+    AccessibilityWidgetIncomingEvent,
+    AccessibilityWidgetWindowEvents
+} from './types';
 
 declare global {
     interface Window {
@@ -7,6 +13,7 @@ declare global {
             emit: (event: string, payload?: any) => void;
         };
     }
+    interface WindowEventMap extends AccessibilityWidgetWindowEvents {}
 }
 
 export class AccessibilitySDK {
