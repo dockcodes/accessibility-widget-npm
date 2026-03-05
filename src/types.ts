@@ -79,7 +79,7 @@ const POSITION_EVENT = 'AccessibilityOnChangePosition' as const;
 
 const ABSTRACT_EVENT = 'AccessibilityOnChangeOption' as const;
 
-export const ACCESSIBILITY_EVENTS = [...NUMBER_EVENTS, ...BOOLEAN_EVENTS, EMPTY_EVENTS, ...STRING_EVENTS, POSITION_EVENT, ABSTRACT_EVENT] as const;
+export const ACCESSIBILITY_EVENTS = [...NUMBER_EVENTS, ...BOOLEAN_EVENTS, ...EMPTY_EVENTS, ...STRING_EVENTS, POSITION_EVENT, ABSTRACT_EVENT] as const;
 
 export type AccessibilityActionKey =
     | 'underline'
