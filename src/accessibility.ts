@@ -1,10 +1,12 @@
 import { loadWidgetScript } from './loader';
 import {
+    ACCESSIBILITY_ACTION_NUMBER_KEY,
     ACCESSIBILITY_EVENTS,
     AccessibilityActionKey,
     AccessibilityEvent,
     AccessibilityWidgetIncomingEvent,
-    AccessibilityWidgetWindowEvents
+    AccessibilityWidgetWindowEvents,
+    ActionValue,
 } from './types';
 
 declare global {
@@ -40,6 +42,7 @@ export class AccessibilitySDK {
     }
 
     emit(event: AccessibilityEvent, payload?: any) {
+        if (!this.loaded) return;
         if (!window.accessibility) {
             console.warn('Widget not ready yet');
             return;
@@ -47,8 +50,12 @@ export class AccessibilitySDK {
         window.accessibility.emit(event, payload);
     }
 
-    getAction(key: AccessibilityActionKey) {
-        return typeof window !== 'undefined' ? localStorage.getItem('dacc-' + key) : undefined;
+    getAction<K extends AccessibilityActionKey>(key: K): ActionValue<K> {
+        const ls = typeof window !== 'undefined' ? localStorage.getItem('dacc-' + key) : undefined;
+        if ((ACCESSIBILITY_ACTION_NUMBER_KEY as readonly string[]).includes(key)) {
+            return (ls ? parseInt(ls) : 1) as ActionValue<K>;
+        }
+        return (ls === 'true') as ActionValue<K>;
     }
 
     on(eventName: AccessibilityWidgetIncomingEvent, callback: (detail: any) => void) {
@@ -86,7 +93,7 @@ export class AccessibilitySDK {
     closeMenu = () => this.emit('AccessibilityMenuClose');
 
     get isContrast() {
-        return this.getAction('contrasted') === 'true';
+        return this.getAction('contrasted');
     }
 
     setContrast = (enabled: boolean) => this.emit('AccessibilityContrastSet', enabled);
@@ -94,7 +101,7 @@ export class AccessibilitySDK {
     toggleContrast = () => this.emit('AccessibilityContrastToggle');
 
     get isInvert() {
-        return this.getAction('inverted') === 'true';
+        return this.getAction('inverted');
     }
 
     toggleInvertColors = () => this.emit('AccessibilityInvertColorToggle');
@@ -102,7 +109,7 @@ export class AccessibilitySDK {
     setInvertColors = (enabled: boolean) => this.emit('AccessibilityInvertColorSet', enabled);
 
     get isUnderline() {
-        return this.getAction('underline') === 'true';
+        return this.getAction('underline');
     }
 
     toggleUnderline = () => this.emit('AccessibilityUnderlineToggle');
@@ -110,7 +117,7 @@ export class AccessibilitySDK {
     setUnderline = (enabled: boolean) => this.emit('AccessibilityUnderlineSet', enabled);
 
     get fontSizeScale() {
-        return parseInt(this.getAction('zoom') || '1') || 1;
+        return this.getAction('zoom');
     }
 
     setFontSize = (level: number) => this.emit('AccessibilityFontSizeSet', level);
@@ -122,7 +129,7 @@ export class AccessibilitySDK {
     decreaseFontSize = () => this.emit('AccessibilityFontSizeDecrease');
 
     get letterSpacingScale() {
-        return parseInt(this.getAction('letter-spacing') || '1') || 1;
+        return this.getAction('letter-spacing');
     }
 
     increaseLetterSpacing = () => this.emit('AccessibilityLetterSpacingLevelUp');
@@ -132,7 +139,7 @@ export class AccessibilitySDK {
     letterSpacingLevelUp = () => this.emit('AccessibilityLetterSpacingLevelUp');
 
     get lineHeightScale() {
-        return parseInt(this.getAction('line-height') || '1') || 1;
+        return this.getAction('line-height');
     }
 
     increaseLineHeight = () => this.emit('AccessibilityLineHeightLevelUp');
@@ -142,7 +149,7 @@ export class AccessibilitySDK {
     lineHeightLevelUp = () => this.emit('AccessibilityLineHeightLevelUp');
 
     get saturationScale() {
-        return parseInt(this.getAction('saturation') || '1') || 1;
+        return this.getAction('saturation');
     }
 
     increaseSaturation = () => this.emit('AccessibilitySaturationLevelUp');
@@ -152,7 +159,7 @@ export class AccessibilitySDK {
     saturationLevelUp = () => this.emit('AccessibilitySaturationLevelUp');
 
     get isTextToSpeech() {
-        return this.getAction('text-to-speech') === 'true';
+        return this.getAction('text-to-speech');
     }
 
     toggleTextToSpeech = () => this.emit('AccessibilityTextToSpeechToggle');
@@ -160,7 +167,7 @@ export class AccessibilitySDK {
     setTextToSpeech = (enabled: boolean) => this.emit('AccessibilityTextToSpeechSet', enabled);
 
     get isCursorEnlarge() {
-        return this.getAction('enlarge-cursor') === 'true';
+        return this.getAction('enlarge-cursor');
     }
 
     toggleCursorEnlarge = () => this.emit('AccessibilityEnlargeCursorToggle');
@@ -168,7 +175,7 @@ export class AccessibilitySDK {
     setCursorEnlarge = (enabled: boolean) => this.emit('AccessibilityEnlargeCursorSet', enabled);
 
     get isHideMedia() {
-        return this.getAction('hide-media') === 'true';
+        return this.getAction('hide-media');
     }
 
     toggleHideMedia = () => this.emit('AccessibilityHideMediaToggle');
@@ -176,7 +183,7 @@ export class AccessibilitySDK {
     setHideMedia = (enabled: boolean) => this.emit('AccessibilityHideMediaSet', enabled);
 
     get isDisableAnimations() {
-        return this.getAction('disable-animations') === 'true';
+        return this.getAction('disable-animations');
     }
 
     toggleDisableAnimations = () => this.emit('AccessibilityDisableAnimationsToggle');
@@ -184,7 +191,7 @@ export class AccessibilitySDK {
     setDisableAnimations = (enabled: boolean) => this.emit('AccessibilityDisableAnimationsSet', enabled);
 
     get isReadingGuide() {
-        return this.getAction('show-line') === 'true';
+        return this.getAction('show-line');
     }
 
     toggleReadingGuide = () => this.emit('AccessibilityShowLineToggle');
@@ -192,7 +199,7 @@ export class AccessibilitySDK {
     setReadingGuide = (enabled: boolean) => this.emit('AccessibilityShowLineSet', enabled);
 
     get isDyslexicFont() {
-        return this.getAction('dyslexic') === 'true';
+        return this.getAction('dyslexic');
     }
 
     toggleDyslexicFont = () => this.emit('AccessibilityDyslexicToggle');
@@ -200,7 +207,7 @@ export class AccessibilitySDK {
     setDyslexicFont = (enabled: boolean) => this.emit('AccessibilityDyslexicSet', enabled);
 
     get isProfileMotorImpaired() {
-        return this.getAction('mi') === 'true';
+        return this.getAction('mi');
     }
 
     toggleProfileMotorImpaired = () => this.emit('AccessibilityProfileMotorImpairedToggle');
@@ -208,7 +215,7 @@ export class AccessibilitySDK {
     setProfileMotorImpaired = (enabled: boolean) => this.emit('AccessibilityProfileMotorImpairedSet', enabled);
 
     get isProfileLowVision() {
-        return this.getAction('lv') === 'true';
+        return this.getAction('lv');
     }
 
     toggleProfileLowVision = () => this.emit('AccessibilityProfileLowVisionToggle');
@@ -216,7 +223,7 @@ export class AccessibilitySDK {
     setProfileLowVision = (enabled: boolean) => this.emit('AccessibilityProfileLowVisionSet', enabled);
 
     get isProfileColorBlind() {
-        return this.getAction('cb') === 'true';
+        return this.getAction('cb');
     }
 
     toggleProfileColorBlind = () => this.emit('AccessibilityProfileColorBlindToggle');
@@ -224,7 +231,7 @@ export class AccessibilitySDK {
     setProfileColorBlind = (enabled: boolean) => this.emit('AccessibilityProfileColorBlindSet', enabled);
 
     get isProfileDyslexia() {
-        return this.getAction('ds') === 'true';
+        return this.getAction('ds');
     }
 
     toggleProfileDyslexia = () => this.emit('AccessibilityProfileDyslexiaToggle');
@@ -232,7 +239,7 @@ export class AccessibilitySDK {
     setProfileDyslexia = (enabled: boolean) => this.emit('AccessibilityProfileDyslexiaSet', enabled);
 
     get isProfileBlind() {
-        return this.getAction('bl') === 'true';
+        return this.getAction('bl');
     }
 
     toggleProfileBlind = () => this.emit('AccessibilityProfileBlindToggle');
@@ -240,7 +247,7 @@ export class AccessibilitySDK {
     setProfileBlind = (enabled: boolean) => this.emit('AccessibilityProfileBlindSet', enabled);
 
     get isProfileEpileptic() {
-        return this.getAction('ep') === 'true';
+        return this.getAction('ep');
     }
 
     toggleProfileEpileptic = () => this.emit('AccessibilityProfileEpilepticToggle');
@@ -248,7 +255,7 @@ export class AccessibilitySDK {
     setProfileEpileptic = (enabled: boolean) => this.emit('AccessibilityProfileEpilepticSet', enabled);
 
     get isProfileAdhd() {
-        return this.getAction('ad') === 'true';
+        return this.getAction('ad');
     }
 
     toggleProfileAdhd = () => this.emit('AccessibilityProfileAdhdToggle');
@@ -256,7 +263,7 @@ export class AccessibilitySDK {
     setProfileAdhd = (enabled: boolean) => this.emit('AccessibilityProfileAdhdSet', enabled);
 
     get isProfileCognitive() {
-        return this.getAction('cal') === 'true';
+        return this.getAction('cal');
     }
 
     toggleProfileCognitive = () => this.emit('AccessibilityProfileCognitiveAndLearningToggle');

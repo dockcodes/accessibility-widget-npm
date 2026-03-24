@@ -81,28 +81,31 @@ const ABSTRACT_EVENT = 'AccessibilityOnChangeOption' as const;
 
 export const ACCESSIBILITY_EVENTS = [...NUMBER_EVENTS, ...BOOLEAN_EVENTS, ...EMPTY_EVENTS, ...STRING_EVENTS, POSITION_EVENT, ABSTRACT_EVENT] as const;
 
-export type AccessibilityActionKey =
-    | 'underline'
-    | 'contrasted'
-    | 'zoom'
-    | 'inverted'
-    | 'disable-animations'
-    | 'dyslexic'
-    | 'enlarge-cursor'
-    | 'hide-media'
-    | 'letter-spacing'
-    | 'line-height'
-    | 'saturation'
-    | 'show-line'
-    | 'text-to-speech'
-    | 'ad'
-    | 'bl'
-    | 'cal'
-    | 'cb'
-    | 'ds'
-    | 'ep'
-    | 'lv'
-    | 'mi';
+export const ACCESSIBILITY_ACTION_NUMBER_KEY = ['zoom', 'letter-spacing', 'line-height', 'saturation'] as const;
+export const ACCESSIBILITY_ACTION_BOOLEAN_KEY = [
+    'underline',
+    'contrasted',
+    'inverted',
+    'disable-animations',
+    'dyslexic',
+    'enlarge-cursor',
+    'hide-media',
+    'show-line',
+    'text-to-speech',
+    'ad',
+    'bl',
+    'cal',
+    'cb',
+    'ds',
+    'ep',
+    'lv',
+    'mi',
+] as const;
+type NumberKey = (typeof ACCESSIBILITY_ACTION_NUMBER_KEY)[number];
+type BooleanKey = (typeof ACCESSIBILITY_ACTION_BOOLEAN_KEY)[number];
+
+export type AccessibilityActionKey = NumberKey | BooleanKey;
+export type ActionValue<K extends AccessibilityActionKey> = K extends NumberKey ? number : boolean;
 
 interface IncomingEventBooleanPayload {
     value: boolean;
@@ -129,12 +132,11 @@ type AccessibilityWidgetIncomingEmptyEvent = (typeof EMPTY_EVENTS)[number];
 type AccessibilityWidgetIncomingPositionEvent = typeof POSITION_EVENT;
 type AccessibilityWidgetIncomingAbstractEvent = typeof ABSTRACT_EVENT;
 
-export type AccessibilityWidgetWindowEvents =
-    & Record<AccessibilityWidgetIncomingBooleanEvent, CustomEvent<IncomingEventBooleanPayload>>
-    & Record<AccessibilityWidgetIncomingNumberEvent, CustomEvent<IncomingEventNumberPayload>>
-    & Record<AccessibilityWidgetIncomingStringEvent, CustomEvent<IncomingEventStringPayload>>
-    & Record<AccessibilityWidgetIncomingEmptyEvent, CustomEvent>
-    & Record<AccessibilityWidgetIncomingPositionEvent, CustomEvent<IncomingEventPositionPayload>>
-    & Record<AccessibilityWidgetIncomingAbstractEvent, CustomEvent<IncomingEventAbstractPayload>>;
+export type AccessibilityWidgetWindowEvents = Record<AccessibilityWidgetIncomingBooleanEvent, CustomEvent<IncomingEventBooleanPayload>> &
+    Record<AccessibilityWidgetIncomingNumberEvent, CustomEvent<IncomingEventNumberPayload>> &
+    Record<AccessibilityWidgetIncomingStringEvent, CustomEvent<IncomingEventStringPayload>> &
+    Record<AccessibilityWidgetIncomingEmptyEvent, CustomEvent> &
+    Record<AccessibilityWidgetIncomingPositionEvent, CustomEvent<IncomingEventPositionPayload>> &
+    Record<AccessibilityWidgetIncomingAbstractEvent, CustomEvent<IncomingEventAbstractPayload>>;
 
 export type AccessibilityWidgetIncomingEvent = (typeof ACCESSIBILITY_EVENTS)[number];
